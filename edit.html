@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit wedding details (offline)</title>
+    <style>
+      :root {
+        --bg: #faf6f1;
+        --card: #fff;
+        --ink: #3d2c29;
+        --accent: #b85c6e;
+        --border: #e8ddd4;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      button,
+      .btn {
+        font: inherit;
+        cursor: pointer;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--ink);
+        text-decoration: none;
+        display: inline-block;
+      }
+      button.primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 1.5rem;
+      }
+      section {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+      section h2 {
+        margin: 0 0 1rem;
+        font-size: 1rem;
+        color: var(--accent);
+      }
+      label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        margin-top: 0.75rem;
+      }
+      label:first-of-type {
+        margin-top: 0;
+      }
+      input,
+      textarea {
+        width: 100%;
+        font: inherit;
+        padding: 0.5rem 0.65rem;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #fff;
+      }
+      textarea {
+        min-height: 4rem;
+        resize: vertical;
+      }
+      .event-card {
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+      .event-card h3 {
+        margin: 0 0 0.5rem;
+        font-size: 0.95rem;
+      }
+      .status {
+        font-size: 0.85rem;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .status.ok {
+        display: block;
+        background: #e8f5e9;
+        color: #2e5d32;
+      }
+      .status.err {
+        display: block;
+        background: #ffebee;
+        color: #8b2e2e;
+      }
+      .hint {
+        font-size: 0.85rem;
+        color: #6b5b55;
+        margin: 0 0 1rem;
+      }
+      .row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+      @media (max-width: 520px) {
+        .row-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Edit wedding invitation</h1>
+      <div class="actions">
+        <button type="button" id="btn-import-json">Import JSON</button>
+        <button type="button" id="btn-export-json">Export JSON</button>
+        <button type="button" id="btn-load-base">Load app bundle</button>
+        <button type="button" class="primary" id="btn-save">Save</button>
+        <a class="btn" href="index.html" id="btn-preview">Preview</a>
+      </div>
+    </header>
+    <main>
+      <div id="status" class="status"></div>
+      <p class="hint">
+        Works fully offline after the first save. Edit fields below, click
+        <strong>Save</strong>, then open <strong>Preview</strong>. You can also
+        edit <code>wedding-config.json</code> in a text editor and import it here.
+      </p>
+
+      <form id="form">
+        <section>
+          <h2>Couple &amp; page title</h2>
+          <div class="row-2">
+            <div>
+              <label for="brideName">Bride name</label>
+              <input id="brideName" name="brideName" required />
+            </div>
+            <div>
+              <label for="groomName">Groom name</label>
+              <input id="groomName" name="groomName" required />
+            </div>
+          </div>
+          <label for="metaTitle">Browser tab title</label>
+          <input id="metaTitle" name="metaTitle" />
+          <label for="monogramAlt">Monogram image description</label>
+          <input id="monogramAlt" name="monogramAlt" placeholder="e.g. A &amp; B monogram" />
+        </section>
+
+        <section>
+          <h2>Opening prayers &amp; save the date</h2>
+          <label for="invocation">Invocation lines (one per row)</label>
+          <textarea id="invocation" name="invocation" rows="4"></textarea>
+          <label for="saveTheDate">Save the date text</label>
+          <input id="saveTheDate" name="saveTheDate" placeholder="23rd &amp; 24th June 2026" />
+          <label for="countdownIso">Countdown target (ISO date, midnight India)</label>
+          <input id="countdownIso" name="countdownIso" placeholder="2026-06-23T00:00:00+05:30" />
+          <p class="hint" style="margin-top: 0.5rem">
+            Countdown runs to the date above (e.g. 23 June 2026).
+          </p>
+        </section>
+
+        <section>
+          <h2>Hosts &amp; family lines</h2>
+          <label for="hosts">Hosts line</label>
+          <input id="hosts" name="hosts" />
+          <label for="brideLineage">Bride lineage (one line per row)</label>
+          <textarea id="brideLineage" name="brideLineage" rows="3"></textarea>
+          <label for="groomLineage">Groom lineage (one line per row)</label>
+          <textarea id="groomLineage" name="groomLineage" rows="4"></textarea>
+        </section>
+
+        <section>
+          <h2>Venue &amp; map</h2>
+          <label for="venue">Venue name</label>
+          <input id="venue" name="venue" />
+          <label for="directionsUrl">Directions link (Google Maps)</label>
+          <input id="directionsUrl" name="directionsUrl" type="url" />
+          <p class="hint" style="margin-top: 0.75rem">
+            Offline map: replace <code>assets/images/venue-map.svg</code> (or add
+            venue-map.jpg) with a screenshot of your venue.
+          </p>
+        </section>
+
+        <section>
+          <h2>Events</h2>
+          <div id="events"></div>
+        </section>
+      </form>
+    </main>
+
+    <input type="file" id="file-json" accept=".json,application/json" hidden />
+    <input type="file" id="file-base" accept=".js,text/javascript" hidden />
+
+    <script src="./assets/js/apply-patch.js"></script>
+    <script>
+      let DEFAULT_CONFIG = null;
+      let loadedMaps = null;
+
+      const form = document.getElementById("form");
+      const eventsEl = document.getElementById("events");
+      const statusEl = document.getElementById("status");
+
+      function showStatus(msg, ok) {
+        statusEl.textContent = msg;
+        statusEl.className = "status " + (ok ? "ok" : "err");
+      }
+
+      async function loadAppBase() {
+        const cached = localStorage.getItem("weddingAppBase");
+        if (cached) return cached;
+        try {
+          const res = await fetch("./assets/js/app.base.js");
+          if (res.ok) {
+            const text = await res.text();
+            localStorage.setItem("weddingAppBase", text);
+            return text;
+          }
+        } catch {
+          /* file:// may block fetch */
+        }
+        return null;
+      }
+
+      function renderEvents(events) {
+        eventsEl.innerHTML = "";
+        events.forEach((ev, i) => {
+          const card = document.createElement("div");
+          card.className = "event-card";
+          card.dataset.index = i;
+          card.innerHTML = `
+            <h3>Event ${i + 1}</h3>
+            <label>Title <input name="ev-title-${i}" value="${escapeAttr(ev.title)}" /></label>
+            <label>Description <textarea name="ev-desc-${i}" rows="2">${escapeHtml(ev.description)}</textarea></label>
+            <div class="row-2">
+              <label>Day <input name="ev-day-${i}" value="${escapeAttr(ev.day)}" /></label>
+              <label>Date <input name="ev-date-${i}" value="${escapeAttr(ev.date)}" /></label>
+            </div>
+            <div class="row-2">
+              <label>Time <input name="ev-time-${i}" value="${escapeAttr(ev.time)}" /></label>
+              <label>Icon <input name="ev-icon-${i}" value="${escapeAttr(ev.icon)}" /></label>
+            </div>
+            <label>Venue <input name="ev-venue-${i}" value="${escapeAttr(ev.venue || "")}" /></label>
+            <label>Dress code (optional) <input name="ev-dress-${i}" value="${escapeAttr(ev.dressCode || "")}" /></label>
+          `;
+          eventsEl.appendChild(card);
+        });
+      }
+
+      function escapeAttr(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/"/g, "&quot;")
+          .replace(/</g, "&lt;");
+      }
+      function escapeHtml(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+      }
+
+      function fillForm(config) {
+        document.getElementById("brideName").value = config.couple.brideName;
+        document.getElementById("groomName").value = config.couple.groomName;
+        document.getElementById("metaTitle").value =
+          config.meta?.title ||
+          `${config.couple.brideName} & ${config.couple.groomName} - Wedding Invitation`;
+        document.getElementById("monogramAlt").value = config.couple.monogramAlt || "";
+        document.getElementById("invocation").value = (config.invocation || []).join("\n");
+        document.getElementById("saveTheDate").value = config.saveTheDate || "";
+        document.getElementById("countdownIso").value =
+          config.countdownIso || "2026-06-23T00:00:00+05:30";
+        document.getElementById("hosts").value = config.hosts;
+        document.getElementById("brideLineage").value = (config.brideLineage || []).join(
+          "\n"
+        );
+        document.getElementById("groomLineage").value = (config.groomLineage || []).join(
+          "\n"
+        );
+        document.getElementById("venue").value = config.venue;
+        document.getElementById("directionsUrl").value =
+          config.maps?.directionsUrl || "";
+        loadedMaps = config.maps || null;
+        document.title = "Edit — " + (config.meta?.title || "Wedding");
+        renderEvents(config.events);
+      }
+
+      function readForm() {
+        const brideName = document.getElementById("brideName").value.trim();
+        const groomName = document.getElementById("groomName").value.trim();
+        const events = [];
+        document.querySelectorAll(".event-card").forEach((card) => {
+          const i = card.dataset.index;
+          events.push({
+            title: form.elements[`ev-title-${i}`].value.trim(),
+            description: form.elements[`ev-desc-${i}`].value,
+            day: form.elements[`ev-day-${i}`].value.trim(),
+            date: form.elements[`ev-date-${i}`].value.trim(),
+            time: form.elements[`ev-time-${i}`].value.trim(),
+            venue: form.elements[`ev-venue-${i}`].value.trim(),
+            dressCode: form.elements[`ev-dress-${i}`].value.trim(),
+            icon: form.elements[`ev-icon-${i}`].value.trim(),
+            image: (DEFAULT_CONFIG && DEFAULT_CONFIG.events[i]?.image) || "mainbg-C1qdEah8.jpg",
+          });
+        });
+
+        return {
+          meta: {
+            title:
+              document.getElementById("metaTitle").value.trim() ||
+              `${brideName} & ${groomName} - Wedding Invitation`,
+            description: "Wedding invitation",
+          },
+          couple: {
+            brideName,
+            groomName,
+            monogramAlt: document.getElementById("monogramAlt").value.trim(),
+          },
+          invocation: document
+            .getElementById("invocation")
+            .value.split("\n")
+            .map((l) => l.trim())
+            .filter(Boolean),
+          saveTheDate: document.getElementById("saveTheDate").value.trim(),
+          countdownIso: document.getElementById("countdownIso").value.trim(),
+          hosts: document.getElementById("hosts").value.trim(),
+          brideLineage: document
+            .getElementById("brideLineage")
+            .value.split("\n")
+            .map((l) => l.trim())
+            .filter(Boolean),
+          groomLineage: document
+            .getElementById("groomLineage")
+            .value.split("\n")
+            .map((l) => l.trim())
+            .filter(Boolean),
+          venue: document.getElementById("venue").value.trim(),
+          maps: {
+            staticMapImage:
+              loadedMaps?.staticMapImage || "./assets/images/venue-map.svg",
+            directionsUrl: document.getElementById("directionsUrl").value.trim(),
+            embedUrl: loadedMaps?.embedUrl ?? "",
+          },
+          events,
+        };
+      }
+
+      async function save() {
+        const config = readForm();
+        const base = await loadAppBase();
+        if (!base) {
+          showStatus(
+            "Load the app bundle first: click “Load app bundle” and choose assets/js/app.base.js (one-time, works offline).",
+            false
+          );
+          document.getElementById("file-base").click();
+          return;
+        }
+        try {
+          const patched = WeddingPatch.applyPatch(base, config);
+          WeddingPatch.saveConfig(config);
+          WeddingPatch.savePatchedApp(patched);
+          document.title = "Edit — " + config.meta.title;
+          showStatus("Saved offline. Open Preview to see your invitation.", true);
+        } catch (e) {
+          showStatus("Save failed: " + e.message, false);
+        }
+      }
+
+      document.getElementById("btn-save").addEventListener("click", save);
+
+      document.getElementById("btn-import-json").addEventListener("click", () => {
+        document.getElementById("file-json").click();
+      });
+
+      document.getElementById("file-json").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            fillForm(JSON.parse(reader.result));
+            showStatus("Imported " + file.name, true);
+          } catch {
+            showStatus("Invalid JSON file", false);
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+
+      document.getElementById("btn-export-json").addEventListener("click", () => {
+        const config = readForm();
+        const blob = new Blob([JSON.stringify(config, null, 2)], {
+          type: "application/json",
+        });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "wedding-config.json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        showStatus("Downloaded wedding-config.json", true);
+      });
+
+      document.getElementById("btn-load-base").addEventListener("click", () => {
+        document.getElementById("file-base").click();
+      });
+
+      document.getElementById("file-base").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          localStorage.setItem("weddingAppBase", reader.result);
+          showStatus("App bundle stored offline.", true);
+        };
+        reader.readAsText(file);
+        e.target.value = "";
+      });
+
+      (async function init() {
+        let config = WeddingPatch.loadConfig();
+        if (!WeddingPatch.isConfigCurrent(config)) {
+          config = null;
+        }
+        try {
+          const res = await fetch("./wedding-config.json");
+          if (res.ok) DEFAULT_CONFIG = await res.json();
+        } catch {
+          /* ignore */
+        }
+        if (!config) config = DEFAULT_CONFIG;
+        if (!config) {
+          showStatus("Could not load wedding-config.json", false);
+          return;
+        }
+        fillForm(config);
+
+        const base = await loadAppBase();
+        if (!base) {
+          showStatus(
+            'First time: click "Load app bundle" and select assets/js/app.base.js from this folder (only once).',
+            false
+          );
+        } else if (WeddingPatch.loadPatchedApp()) {
+          showStatus("Loaded your saved invitation settings.", true);
+        }
+      })();
+    </script>
+  </body>
+</html>

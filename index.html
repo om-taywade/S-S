@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Saniya & Siddhant - Wedding Invitation</title>
+    <link rel="stylesheet" href="./assets/css/index-BC6_D4MB.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="./assets/js/apply-patch.js"></script>
+    <script>
+      (async function boot() {
+        const { WeddingPatch } = window;
+        const savedConfig = WeddingPatch.loadConfig();
+        let appSource =
+          WeddingPatch.isConfigCurrent(savedConfig) && WeddingPatch.loadPatchedApp();
+
+        if (appSource) {
+          mountApp(appSource);
+          return;
+        }
+
+        // GitHub Pages: use pre-built bundle from `node scripts/patch-bundle.js`
+        try {
+          const built = await fetch("./assets/js/app.js", { method: "HEAD" });
+          if (built.ok) {
+            const script = document.createElement("script");
+            script.type = "module";
+            script.src = "./assets/js/app.js";
+            document.body.appendChild(script);
+            return;
+          }
+        } catch {
+          /* fall through to runtime patch */
+        }
+
+        WeddingPatch.clearSaved();
+        const base =
+          localStorage.getItem("weddingAppBase") ||
+          (await fetch("./assets/js/app.base.js")
+            .then((r) => (r.ok ? r.text() : null))
+            .catch(() => null));
+
+        if (!base) {
+          showSetupMessage();
+          return;
+        }
+
+        let config = WeddingPatch.loadConfig();
+        if (!config) {
+          config = await fetch("./wedding-config.json")
+            .then((r) => (r.ok ? r.json() : null))
+            .catch(() => null);
+        }
+        if (!config) {
+          showSetupMessage();
+          return;
+        }
+
+        mountApp(WeddingPatch.applyPatch(base, config));
+      })();
+
+      function mountApp(source) {
+        const url = URL.createObjectURL(
+          new Blob([source], { type: "text/javascript" })
+        );
+        const script = document.createElement("script");
+        script.type = "module";
+        script.src = url;
+        document.body.appendChild(script);
+      }
+
+      function showSetupMessage() {
+        document.body.innerHTML =
+          '<div style="font-family:Georgia,serif;max-width:32rem;margin:4rem auto;padding:0 1.5rem;line-height:1.6;color:#4a3728">' +
+          "<h1 style='font-weight:400'>Set up your invitation</h1>" +
+          "<p>Open <a href='edit.html'>edit.html</a> to enter names, dates, and venue. " +
+          "Click <strong>Save</strong>, then return here to preview.</p>" +
+          "<p style='font-size:0.9rem;opacity:0.85'>If the page stays blank, run a local server in this folder (still offline):</p>" +
+          "<code style='display:block;background:#f5ebe0;padding:0.75rem;border-radius:8px;font-size:0.85rem'>python3 -m http.server 8080</code>" +
+          "<p style='font-size:0.9rem'>Then open <a href='http://localhost:8080/edit.html'>http://localhost:8080/edit.html</a></p>" +
+          "</div>";
+      }
+    </script>
+  </body>
+</html>

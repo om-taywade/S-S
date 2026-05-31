@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "title": "Saniya & Siddhant - Wedding Invitation",
+    "description": "Wedding invitation"
+  },
+  "couple": {
+    "brideName": "Dr. Saniya",
+    "groomName": "Dr. Siddhant",
+    "monogramAlt": "S & S monogram"
+  },
+  "invocation": [
+    "‖ Shree Ganeshaya Namah ‖",
+    "‖ Shri Radha Krishnaya Namah ‖   ‖ Shri Sita Ramabhyam Namah ‖",
+    "‖ Shri Kulaswamini Prasanna ‖"
+  ],
+  "saveTheDate": "23rd & 24th June 2026",
+  "countdownIso": "2026-06-22T00:00:00+05:30",
+  "hosts": "Smt. Megha & Sanjay Nande",
+  "brideLineage": [
+    "(G/D of Late Shri. Shravanji & Late Smt. Manorama Nande",
+    "Shri. Ramkrushna & Smt. Aahalata Taywade)"
+  ],
+  "groomLineage": [
+    "(S/O Shri. Raju & Geeta Umbarkar)",
+    "(G/S of Shri. Panjabrao Umbarkar)"
+  ],
+  "venue": "Telai Celebration Hall, Amravati",
+  "maps": {
+    "staticMapImage": "./assets/images/venue-map.svg",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=Telai+Celebrations+Hall,+Shegaon-Rahatgaon+Rd,+Arjun+Nagar,+Amravati,+Maharashtra+444601",
+    "embedUrl": "https://maps.google.com/maps?q=Telai+Celebrations+Hall,+Shegaon-Rahatgaon+Rd,+Arjun+Nagar,+Amravati,+Maharashtra+444601&hl=en&z=16&output=embed"
+  },
+  "events": [
+    {
+      "title": "Phoolo Ki Haldi Ceremony",
+      "description": "A vibrant pre-wedding ritual in Indian weddings where a paste made of turmeric (haldi), sandalwood, and oils/rose water is applied to the bride and groom.",
+      "day": "Tuesday",
+      "date": "June 23, 2026",
+      "time": "09:30 AM onwards",
+      "venue": "Telai Prime Hall & Lawn, Amravati",
+      "dressCode": "Yellow Colour Outfit",
+      "icon": "🌼",
+      "image": "pathbithai-mN0HwaUc.png"
+    },
+    {
+      "title": "Simanti Poojan",
+      "description": "A traditional Maharashtrian wedding ritual where the groom and his family are formally welcomed by the bride’s family. ",
+      "day": "Tuesday",
+      "date": "June 23, 2026",
+      "time": "05:00 PM onwards",
+      "venue": "Telai Prime Hall, Amravati",
+      "dressCode": "",
+      "icon": "",
+      "image": "sanget-Bz6_t-zi.png"
+    },
+    {
+      "title": "Sangeet Night",
+      "description": "A vibrant, music-filled pre-wedding celebration common in South Asian weddings.",
+      "day": "Tuesday",
+      "date": "June 23, 2026",
+      "time": "06:00 PM onwards",
+      "venue": "Telai Celebration Hall, Amravati",
+      "dressCode": "Ladies - Designer Outfit      Gents - Suit / Tuxedo",
+      "icon": "🎶",
+      "image": "varmal-C8h79Pnd.png"
+    },
+    {
+      "title": "Saptapadi",
+      "description": "The sacred seven vows\naround the holy fire",
+      "day": "Wednesday",
+      "date": "June 24, 2026",
+      "time": "08:00 AM onwards",
+      "venue": "Telai Celebration Hall / Lawn, Amravati",
+      "dressCode": "Traditional Attire",
+      "icon": "🔥",
+      "image": "phere-LBZBKn6h.png"
+    },
+    {
+      "title": "The Grand Wedding",
+      "description": "A joyous and symbolic Hindu wedding ritual where the bride and groom exchange floral garlands.",
+      "day": "Wednesday",
+      "date": "June 24, 2026",
+      "time": "12:30 PM onwards",
+      "venue": "Telai Celebration Hall, Amravati",
+      "dressCode": "Traditional Attire",
+      "icon": "💐",
+      "image": "recept-CMr8tXBs.jpg"
+    }
+  ]
+}
